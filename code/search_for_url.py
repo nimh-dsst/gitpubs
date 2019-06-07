@@ -27,6 +27,8 @@ def parse_url(url):
 
     # NEW TARGET DOMAINS GO HERE
     if "github" in location:
+        if "github.io" in location:
+            return "github.io"
         return "github"
     elif "tinyurl" in location:
         return "tinyurl"
@@ -35,7 +37,7 @@ def parse_url(url):
     else:
         return None
 
-#returns (None,None) if not a github URL
+#returns (None,None) if not a full github URL
 def parse_github_urls(url):
     #reparses here
     #could be removed for efficiency?
@@ -48,6 +50,9 @@ def parse_github_urls(url):
     #TODO: check that this pattern is standard for github
     # path_breakdown[0] should be the user name
     # path_breakdown[1] should be the repo address
+    if len(path_breakdown) < 3:
+        return (None,None)
+
     return (path_breakdown[1], path_breakdown[2])
 
 if __name__ == "__main__":
@@ -63,6 +68,9 @@ if __name__ == "__main__":
         if domain == "github":
             username, repo = parse_github_urls(url)
             print(username, repo)
+            if username and repo:
+                #do something here with username and repo
+                pass
         else:
             pass
 
