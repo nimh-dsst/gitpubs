@@ -20,7 +20,7 @@ class GithubAPI():
 
         #if we already know the repo
         if repo_name is not None and acct_name is not None:
-            endpoint = "https://api.github.com/repos/%s/%s" % (repo_name,acct_name)
+            endpoint = "https://api.github.com/repos/%s/%s" % (acct_name,repo_name)
         self.endpoint = endpoint
 
         #HTTP for the endpoint
