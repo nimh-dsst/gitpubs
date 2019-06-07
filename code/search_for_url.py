@@ -1,6 +1,7 @@
 
 import re
 import pprint
+import urllib.parse as urp
 
 def search_for_url( target_string ):
     url_pattern = "^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$"
@@ -11,11 +12,59 @@ def search_for_url( target_string ):
 
     return urls
 
+##
+## defines some enumerated types (just by string) for possible url outputs
+##
+
+def parse_url(url):
+    parse_object = urp.urlparse(url)
+
+    # this is a string of the
+    #   subdomain.domain.topdomain
+    # without any suffix (.../index.html stuff)
+    location = parse_object.netloc
+    location = location.lower()
+
+    # NEW TARGET DOMAINS GO HERE
+    if "github" in location:
+        return "github"
+    elif "tinyurl" in location:
+        return "tinyurl"
+    elif "bit.ly" in location:
+        return "bitly"
+    else:
+        return None
+
+#returns (None,None) if not a github URL
+def parse_github_urls(url):
+    #reparses here
+    #could be removed for efficiency?
+    parse_object = urp.urlparse(url)
+
+    # this is a string of the suffix (.../dir/subdir/index.html)
+    # without the subdomain
+    path_breakdown = parse_object.path.split("/")
+
+    #TODO: check that this pattern is standard for github
+    # path_breakdown[0] should be the user name
+    # path_breakdown[1] should be the repo address
+    return (path_breakdown[1], path_breakdown[2])
+
 if __name__ == "__main__":
-    pprint(search_for_url( "hahah akhldfajl k https://mail.google.com/mail/u/1/#inbox"))
-    pprint(search_for_url( "This is my github repo (https://github.com/riddlet/ac_knowl) and I support doing things with it."))
+    pprint.pprint(search_for_url( "hahah akhldfajl k https://mail.google.com/mail/u/1/#inbox"))
+    pprint.pprint(search_for_url( "This is my github repo (https://github.com/riddlet/ac_knowl) and I support doing things with it."))
 
+    url_list = search_for_url( "This is my github repo (https://github.com/riddlet/ac_knowl) and I support doing things with it.")
 
+    for url in url_list:
+        domain = parse_url(url)
+
+        # DOMAIN SPECIFIC PARSERS
+        if domain == "github":
+            username, repo = parse_github_urls(url)
+            print(username, repo)
+        else:
+            pass
 
 
 
